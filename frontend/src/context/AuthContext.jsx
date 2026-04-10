@@ -5,7 +5,17 @@ import toast from 'react-hot-toast'
 const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]       = useState(() => JSON.parse(localStorage.getItem('user') || 'null'))
+
+  // ✅ SAFE USER LOAD (ERROR FIX)
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('user')
+      return stored ? JSON.parse(stored) : null
+    } catch (error) {
+      return null
+    }
+  })
+
   const [loading, setLoading] = useState(false)
 
   // Sync user profile on mount
@@ -19,7 +29,9 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.get('/auth/me')
       setUser(data.user)
       localStorage.setItem('user', JSON.stringify(data.user))
-    } catch { logout() }
+    } catch {
+      logout()
+    }
   }
 
   const login = async (email, password) => {
