@@ -44,7 +44,10 @@ app.get('/api/seed', async (req, res) => {
 app.get('/api/health', (req, res) =>
   res.json({ status: 'OK', message: 'ShopKart API Running' })
 );
-
+// YE ADD KIYA HAI
+app.get('/', (req, res) => {
+  res.send('ShopKart Backend Running 🚀');
+});
 // ─── Error Handler ─────────────────────────────────────
 app.use(require('./middleware/errorHandler'));
 
