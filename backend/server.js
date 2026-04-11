@@ -10,8 +10,24 @@ dotenv.config();
 const app = express();
 
 // ─── Middleware ─────────────────────────────────────────
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://shopkart-apka-ecommerce-1.onrender.com'
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    const isAllowed = allowedOrigins.some(o => origin.startsWith(o));
+
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.log("Blocked Origin:", origin);
+      callback(new Error("CORS not allowed"));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '50mb' }));
